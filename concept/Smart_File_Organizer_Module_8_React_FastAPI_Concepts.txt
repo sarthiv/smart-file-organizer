@@ -1,0 +1,235 @@
+SMART FILE ORGANIZER
+MODULE 8 — REACT ↔ FASTAPI INTEGRATION
+CONCEPT NOTES
+
+1. MODULE GOAL
+Module 8 connects the React frontend with the FastAPI backend using Axios.
+
+Before Module 8:
+    React frontend      X      FastAPI backend
+
+After Module 8:
+    React
+      ↓
+    Axios
+      ↓
+    FastAPI
+      ↓
+    Scanner / Organizer
+      ↓
+    File System
+
+2. AXIOS
+Axios is a JavaScript HTTP client used by the React frontend to communicate with the backend.
+
+We created:
+    frontend/src/services/api.js
+
+Axios instance:
+    const api = axios.create({
+        baseURL: "http://127.0.0.1:8000",
+    });
+
+3. BASE URL
+The base URL is the common address of the FastAPI server.
+
+Our backend:
+    http://127.0.0.1:8000
+
+Therefore:
+    api.post("/organizer/scan")
+
+sends the request to:
+    http://127.0.0.1:8000/organizer/scan
+
+4. API SERVICE FUNCTIONS
+We created reusable functions:
+    scanFolder(path)
+    organizeFolder(path)
+
+This keeps HTTP communication outside the React UI components.
+
+Architecture:
+    React Component
+        ↓
+    api.js
+        ↓
+    Axios
+        ↓
+    FastAPI
+
+5. POST REQUEST
+The frontend sends a POST request with JSON data.
+
+Example:
+    {
+        "path": "test_file"
+    }
+
+This matches the Pydantic FolderRequest model on the backend.
+
+6. ASYNC / AWAIT
+API calls are asynchronous because the frontend must wait for a response from the backend.
+
+Example:
+    const data = await scanFolder("test_file");
+
+await pauses the function until the promise resolves.
+
+7. TRY / CATCH IN REACT
+The temporary ApiTest component used:
+    try {
+        ...
+    } catch (error) {
+        ...
+    }
+
+This allows the frontend to handle backend/network failures without crashing the component.
+
+8. useState()
+React's useState was used to store the API response.
+
+Example:
+    const [result, setResult] = useState(null);
+
+After receiving data:
+    setResult(data);
+
+React then re-renders the component with the new result.
+
+9. JSON.stringify()
+The temporary test component displayed the API response using:
+    JSON.stringify(result, null, 2)
+
+This converts a JavaScript object into readable formatted JSON text.
+
+10. CORS
+The frontend and backend use different origins:
+
+    React:
+        http://localhost:5173
+
+    FastAPI:
+        http://127.0.0.1:8000
+
+The browser therefore applies CORS rules.
+
+We added FastAPI CORSMiddleware and allowed:
+    http://localhost:5173
+    http://127.0.0.1:5173
+
+11. CORS ERROR THAT WE FIXED
+Before CORS configuration, the browser sent:
+    OPTIONS /organizer/scan
+
+The backend returned:
+    405 Method Not Allowed
+
+After adding CORSMiddleware, the frontend successfully received the API response.
+
+12. FRONTEND → BACKEND TEST
+The temporary ApiTest component called:
+    scanFolder("test_file")
+
+The successful response contained:
+    status: "success"
+    total_files: 7
+    files: [...]
+
+This proved that React could communicate with FastAPI.
+
+13. ERROR HANDLING TEST
+We temporarily changed the frontend request to use:
+    wrong_folder
+
+The backend returned a 404 error and the React catch block handled the failed request.
+
+This verified both successful and failed communication paths.
+
+14. IMPORTANT FILES CREATED / UPDATED
+
+Frontend:
+    frontend/src/services/api.js
+    frontend/src/components/organizer/ApiTest.jsx
+
+Backend:
+    backend/app/main.py
+        -> CORS middleware
+
+Existing backend API:
+    /organizer/scan
+    /organizer/organize
+
+15. IMPORTANT CONCEPTS LEARNED
+- Axios
+- HTTP client
+- baseURL
+- POST request
+- JSON request body
+- async/await
+- Promise
+- try/catch
+- React useState
+- JSON.stringify()
+- CORS
+- CORSMiddleware
+- frontend/backend communication
+- service layer
+- API integration
+
+16. VIVA / INTERVIEW QUESTIONS
+
+Q1. What is Axios?
+Answer: A JavaScript HTTP client used to send requests to APIs.
+
+Q2. Why did we create api.js?
+Answer: To centralize API communication and keep HTTP logic separate from UI components.
+
+Q3. What is async/await?
+Answer: JavaScript syntax used to work conveniently with asynchronous operations such as API requests.
+
+Q4. What is CORS?
+Answer: A browser security mechanism that controls requests between different origins.
+
+Q5. Why did our request initially return 405?
+Answer: The browser sent a CORS preflight OPTIONS request, but the backend was not configured to allow the frontend origin.
+
+Q6. What does useState do?
+Answer: It stores state inside a React component and causes a re-render when the state is updated.
+
+Q7. What is a POST request?
+Answer: An HTTP request commonly used to send data to a server and perform an operation.
+
+Q8. Why use try/catch around an API call?
+Answer: To handle network or server errors gracefully.
+
+Q9. What is separation of concerns?
+Answer: Keeping UI, API communication, and backend business logic in separate responsibilities/modules.
+
+Q10. What proved that React and FastAPI were connected?
+Answer: The React button successfully called /organizer/scan and displayed the JSON response from FastAPI.
+
+17. CURRENT ARCHITECTURE
+
+React UI
+    ↓
+api.js
+    ↓
+Axios
+    ↓
+FastAPI
+    ↓
+Pydantic
+    ↓
+API Router
+    ↓
+Scanner / Classifier / Organizer
+    ↓
+File System
+
+18. DEVELOPMENT NOTE
+ApiTest.jsx and the temporary App.jsx setup were created only to verify the frontend/backend connection.
+The actual project UI will be restored and connected to the API in the upcoming frontend integration work.
+
+NEXT MODULE
+Module 9 will begin integrating the actual Smart File Organizer UI with the working backend instead of using the temporary API test screen.

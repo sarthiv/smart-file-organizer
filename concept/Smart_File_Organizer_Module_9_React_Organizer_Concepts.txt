@@ -1,0 +1,153 @@
+SMART FILE ORGANIZER — MODULE 9 CONCEPT NOTES
+React Frontend ↔ FastAPI API Integration
+
+1. Module Goal
+This module connected the React frontend with the FastAPI backend and created the first working Organizer screen.
+
+Flow:
+User enters folder path
+        ↓
+React component
+        ↓
+Axios API service
+        ↓
+FastAPI endpoint
+        ↓
+Scanner + Classifier
+        ↓
+JSON response
+        ↓
+React displays files
+
+2. React Components Used
+- App.jsx: main React component that loads the Organizer page.
+- Organizer.jsx: manages scan/organize state and API calls.
+- FolderInput.jsx: accepts a folder path and triggers scanning.
+
+3. React State
+useState() stores changing UI data.
+
+Important states:
+- files: scanned files returned by backend.
+- folderPath: currently selected folder path.
+- loading: indicates an API operation is running.
+- error: stores/display errors.
+
+Example:
+const [files, setFiles] = useState([]);
+
+4. Props
+FolderInput receives:
+onScan
+
+This allows the child component to send the entered path back to Organizer.
+
+5. Axios
+Axios is used to send HTTP requests from React to FastAPI.
+
+Example:
+api.post("/organizer/scan", { path: path })
+
+6. REST API
+The frontend communicates with backend endpoints:
+POST /organizer/scan
+POST /organizer/organize
+
+POST is used because the request sends data to the backend.
+
+7. JSON
+Frontend sends:
+{"path": "test_file"}
+
+Backend returns structured JSON containing status, total_files, and file information.
+
+8. async/await
+API calls are asynchronous.
+
+async function handleScan(path) {
+    const data = await scanFolder(path);
+}
+
+async means the function can perform asynchronous work.
+await waits for the API response.
+
+9. try/catch/finally
+Used for API error handling and loading state.
+
+try:
+    API request
+catch:
+    show error
+finally:
+    stop loading
+
+10. CORS
+CORS allows the React development server (localhost:5173) to communicate with FastAPI (127.0.0.1:8000).
+
+FastAPI uses CORSMiddleware for this.
+
+11. Conditional Rendering
+React displays content only when conditions are true.
+
+Examples:
+{loading && <p>Scanning folder...</p>}
+{error && <p>{error}</p>}
+{files.length > 0 && (...)}
+
+12. Array map()
+The scanned file list is displayed using:
+files.map((file) => ...)
+
+Each file gets a unique key using file.path.
+
+13. Error Handling
+Backend converts known filesystem errors into HTTP errors.
+Frontend catches failed requests and displays a user-friendly message.
+
+14. Key Concepts to Remember
+- Component
+- Props
+- State
+- useState
+- Axios
+- REST API
+- HTTP POST
+- JSON
+- async/await
+- try/catch/finally
+- CORS
+- Conditional rendering
+- map()
+
+15. Interview / Viva Questions
+Q1. Why use React in this project?
+A. To create the interactive frontend UI.
+
+Q2. Why use Axios?
+A. To communicate with the FastAPI backend using HTTP requests.
+
+Q3. What is CORS?
+A. Cross-Origin Resource Sharing allows controlled communication between different origins.
+
+Q4. Why is useState used?
+A. To store and update dynamic component data.
+
+Q5. What does async/await do?
+A. It makes asynchronous code easier to write and understand.
+
+Q6. Why use POST for scanning?
+A. The folder path is sent to the server in the request body.
+
+Q7. What is JSON?
+A. A lightweight structured data format used for communication between frontend and backend.
+
+Q8. What happens when the user clicks Scan Folder?
+A. React sends the path to FastAPI, FastAPI scans/classifies the files, and React displays the returned result.
+
+Q9. Why do we need error handling?
+A. To prevent application failure and show useful feedback when an API or filesystem operation fails.
+
+Q10. What is the role of App.jsx?
+A. It acts as the entry component that renders the Organizer page.
+
+END OF MODULE 9

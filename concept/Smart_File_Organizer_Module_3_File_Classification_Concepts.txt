@@ -1,0 +1,491 @@
+SMART FILE ORGANIZER
+MODULE 3 - FILE CLASSIFICATION CONCEPT NOTES
+
+==================================================
+1. MODULE GOAL
+==================================================
+
+The File Classification module decides which category a
+file belongs to based on its extension.
+
+Examples:
+
+.pdf  -> Documents
+.jpg  -> Images
+.mp3  -> Music
+.py   -> Code
+.txt  -> Documents
+.xyz  -> Others
+
+The classifier does NOT move or modify files.
+
+
+==================================================
+2. WHY CLASSIFICATION IS NEEDED
+==================================================
+
+The scanner only tells us what files exist.
+
+Example:
+
+    code.py
+    photo.jpg
+    resume.pdf
+    song.mp3
+
+The organizer needs to know where each file should go.
+
+Therefore:
+
+    Scanner
+       |
+       v
+    File information
+       |
+       v
+    Classifier
+       |
+       v
+    Category
+       |
+       v
+    Organizer
+
+
+==================================================
+3. EXTENSION-BASED CLASSIFICATION
+==================================================
+
+Our first classification strategy uses the file extension.
+
+Examples:
+
+    .pdf -> Documents
+    .jpg -> Images
+    .mp3 -> Music
+    .py  -> Code
+
+This is simple, fast, and easy to maintain.
+
+
+==================================================
+4. DICTIONARY MAPPING
+==================================================
+
+We store classification rules in a Python dictionary.
+
+Example:
+
+    FILE_CATEGORIES = {
+        ".pdf": "Documents",
+        ".jpg": "Images",
+        ".mp3": "Music",
+        ".py": "Code",
+    }
+
+The extension is the key.
+
+The category is the value.
+
+Example:
+
+    ".pdf" -> "Documents"
+
+
+==================================================
+5. WHY USE A DICTIONARY?
+==================================================
+
+A dictionary is better than writing a very large chain of
+if/elif statements.
+
+Instead of:
+
+    if extension == ".pdf":
+        ...
+    elif extension == ".jpg":
+        ...
+    elif extension == ".mp3":
+        ...
+
+we can use:
+
+    FILE_CATEGORIES.get(extension, "Others")
+
+This makes the rules easier to read and extend.
+
+
+==================================================
+6. get() METHOD
+==================================================
+
+We use:
+
+    FILE_CATEGORIES.get(extension, "Others")
+
+If the extension exists in the dictionary, its category
+is returned.
+
+Example:
+
+    .py -> Code
+
+If the extension does not exist:
+
+    .xyz -> Others
+
+The second argument is the default value.
+
+This prevents unknown extensions from causing a crash.
+
+
+==================================================
+7. lower() AND NORMALIZATION
+==================================================
+
+The classifier uses:
+
+    extension.lower()
+
+This converts the extension to lowercase.
+
+Examples:
+
+    .PDF -> .pdf
+    .JPG -> .jpg
+    .MP3 -> .mp3
+
+This ensures that uppercase and lowercase versions are
+treated consistently.
+
+
+==================================================
+8. CATEGORY GROUPS
+==================================================
+
+Our current categories include:
+
+Documents:
+    .pdf
+    .doc
+    .docx
+    .txt
+    .rtf
+    .odt
+
+Images:
+    .jpg
+    .jpeg
+    .png
+    .gif
+    .bmp
+    .webp
+    .svg
+
+Videos:
+    .mp4
+    .mkv
+    .avi
+    .mov
+    .wmv
+    .webm
+
+Music:
+    .mp3
+    .wav
+    .flac
+    .aac
+    .ogg
+    .m4a
+
+Code:
+    .py
+    .js
+    .jsx
+    .ts
+    .tsx
+    .java
+    .cpp
+    .c
+    .html
+    .css
+    .sql
+
+Archives:
+    .zip
+    .rar
+    .7z
+    .tar
+    .gz
+
+Executables:
+    .exe
+    .msi
+    .bat
+    .cmd
+
+Unknown extensions:
+    Others
+
+
+==================================================
+9. CLASSIFIER FUNCTION
+==================================================
+
+The main function is:
+
+    def classify_file(extension: str) -> str:
+        extension = extension.lower()
+        return FILE_CATEGORIES.get(extension, "Others")
+
+Input:
+
+    File extension
+
+Output:
+
+    Category name
+
+
+==================================================
+10. MODULAR PROGRAMMING
+==================================================
+
+We separated classification into:
+
+    app/services/classifier.py
+
+The scanner remains responsible for scanning files.
+
+The classifier remains responsible for deciding categories.
+
+This separation is called modular programming.
+
+Benefits:
+
+- Easier testing
+- Easier debugging
+- Easier maintenance
+- Easier future changes
+- Cleaner project structure
+
+
+==================================================
+11. SCANNER + CLASSIFIER INTEGRATION
+==================================================
+
+The scanner imports:
+
+    from app.services.classifier import classify_file
+
+Then it adds:
+
+    "category": classify_file(item.suffix)
+
+Therefore the scanner result now contains:
+
+    name
+    extension
+    path
+    size
+    created_at
+    modified_at
+    category
+
+
+==================================================
+12. COMPLETE DATA FLOW
+==================================================
+
+Example:
+
+File:
+    resume.pdf
+
+Scanner:
+
+    name = resume.pdf
+    extension = .pdf
+
+Classifier:
+
+    .pdf
+      |
+      v
+    Documents
+
+Final result:
+
+    {
+        "name": "resume.pdf",
+        "extension": ".pdf",
+        "category": "Documents"
+    }
+
+
+==================================================
+13. UNKNOWN EXTENSIONS
+==================================================
+
+Not every extension can be known in advance.
+
+Example:
+
+    .abc
+    .xyz
+
+Our classifier returns:
+
+    Others
+
+This is called a fallback/default category.
+
+A fallback is important because real folders may contain
+unusual or newly introduced file types.
+
+
+==================================================
+14. TESTING WE PERFORMED
+==================================================
+
+We tested:
+
+    .py  -> Code
+    .jpg -> Images
+    .pdf -> Documents
+    .mp3 -> Music
+    .txt -> Documents
+    .xyz -> Others
+
+All classifications worked correctly.
+
+We also integrated the classifier with the scanner so
+scanned files now contain category information.
+
+
+==================================================
+15. PYTHON CONCEPTS LEARNED
+==================================================
+
+1. Dictionaries
+2. Key-value mapping
+3. Dictionary.get()
+4. Default/fallback values
+5. String.lower()
+6. Functions
+7. Type hints
+8. Imports
+9. Modular programming
+10. Function return values
+
+
+==================================================
+16. INTERVIEW / VIVA QUESTIONS
+==================================================
+
+Q1. What is file classification?
+
+A. Assigning a category to a file based on information such
+as its extension.
+
+
+Q2. Why do we classify files?
+
+A. To decide which category/folder a file should belong to.
+
+
+Q3. Why did we use a dictionary?
+
+A. It provides a clean and maintainable extension-to-category
+mapping.
+
+
+Q4. What does dictionary.get() do?
+
+A. It returns the value for a key and can provide a default
+value if the key is not found.
+
+
+Q5. Why do we use "Others"?
+
+A. To safely handle unknown or unsupported extensions.
+
+
+Q6. Why use lower()?
+
+A. To normalize extensions and handle uppercase/lowercase
+variations consistently.
+
+
+Q7. What is modular programming?
+
+A. Dividing a program into separate modules with specific
+responsibilities.
+
+
+Q8. Does the classifier move files?
+
+A. No. It only determines the category.
+
+
+Q9. What is a fallback category?
+
+A. A default category used when no specific rule matches.
+
+
+Q10. What is the relationship between scanner and classifier?
+
+A. The scanner discovers files and their properties, while
+the classifier uses the extension to determine the category.
+
+
+==================================================
+17. MODULE STATUS
+==================================================
+
+Module:
+    File Classification
+
+Status:
+    COMPLETED AND TESTED
+
+Verified:
+
+    .py  -> Code
+    .jpg -> Images
+    .pdf -> Documents
+    .mp3 -> Music
+    .txt -> Documents
+    .xyz -> Others
+
+Integration:
+    Scanner + Classifier -> COMPLETED
+
+
+==================================================
+18. NEXT MODULE
+==================================================
+
+MODULE 4 - ORGANIZER ENGINE
+
+The next module will decide the destination path for each
+classified file.
+
+Example:
+
+    test_file/code.py
+        ->
+    test_file/Code/code.py
+
+    test_file/photo.jpg
+        ->
+    test_file/Images/photo.jpg
+
+Before actually moving anything, we will implement a
+PREVIEW / DRY RUN system.
+
+This is important for safety.
+
+==================================================
+END OF MODULE 3 NOTES
+==================================================

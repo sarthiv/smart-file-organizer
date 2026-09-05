@@ -1,0 +1,223 @@
+SMART FILE ORGANIZER
+MODULE 6 — BATCH ORGANIZATION SERVICE
+CONCEPT NOTES
+
+1. MODULE GOAL
+Module 6 upgrades the organizer from moving one file at a time to processing a complete list of scanned files.
+
+Main flow:
+scan_folder()
+    ↓
+files list
+    ↓
+organize_folder()
+    ↓
+organize_file() for each file
+    ↓
+results list
+    ↓
+get_organization_summary()
+
+2. organize_folder()
+Function:
+    organize_folder(files)
+
+It receives the list returned by the scanner and processes every file.
+
+Basic logic:
+    for file in files:
+        organize_file(file["path"], file["category"])
+
+3. FOR LOOP
+The for loop processes files one by one.
+
+Example:
+    for file in files:
+        ...
+
+This makes the service scalable from a few files to many files.
+
+4. FUNCTION COMPOSITION
+organize_folder() calls organize_file().
+
+This is an example of function composition:
+    organize_folder()
+        -> organize_file()
+
+The batch function does not repeat the actual moving logic. It reuses the existing function.
+
+5. TRY / EXCEPT
+The batch service uses:
+    try:
+        ...
+    except Exception as error:
+        ...
+
+This prevents one failed file from stopping the complete batch.
+
+Example:
+    file1 -> organized
+    file2 -> failed
+    file3 -> organized
+
+The process can continue after file2.
+
+6. RESULTS LIST
+A results list stores the outcome for every file.
+
+Each result contains information such as:
+    name
+    category
+    status
+    destination
+
+For a successful file:
+    status = "organized"
+
+For a failed file:
+    status = "failed"
+
+7. ERROR HANDLING
+Errors are converted into useful result information instead of crashing the whole batch.
+
+Example:
+    {
+        "name": "example.pdf",
+        "category": "Documents",
+        "status": "failed",
+        "error": "..."
+    }
+
+This will later help the frontend display successful and failed operations.
+
+8. get_organization_summary()
+Function:
+    get_organization_summary(results)
+
+It calculates:
+    total_files
+    organized
+    failed
+
+Example:
+    7 files processed
+    7 organized
+    0 failed
+
+Result:
+    {
+        "total_files": 7,
+        "organized": 7,
+        "failed": 0
+    }
+
+9. len()
+len(results) returns the number of items in the results list.
+
+Example:
+    len([file1, file2, file3]) -> 3
+
+10. sum() WITH GENERATOR EXPRESSION
+The summary uses:
+    sum(
+        1 for result in results
+        if result["status"] == "organized"
+    )
+
+It counts results matching a condition.
+
+If 7 results are all "organized", the answer is 7.
+
+11. WHY BATCH PROCESSING IS IMPORTANT
+A real organizer should not require the user to manually select and move every file.
+
+Batch processing allows:
+    Folder
+      ↓
+    Scan all files
+      ↓
+    Classify all files
+      ↓
+    Organize all files
+      ↓
+    Return one complete result
+
+12. TEST COMPLETED
+The batch organization test processed the available test files and returned individual result dictionaries.
+
+The tested output showed files such as:
+    code.py -> Code
+    notes.txt -> Documents
+    resume.pdf -> Documents
+    photo.jpg -> Images
+    song.mp3 -> Music
+
+All returned:
+    status = "organized"
+
+The summary test was designed to report total, organized, and failed counts.
+
+13. IMPORTANT PYTHON CONCEPTS LEARNED
+- for loops
+- list of dictionaries
+- try/except
+- exception handling
+- function composition
+- list length using len()
+- counting with sum()
+- generator expressions
+- dictionary access
+- modular programming
+
+14. ARCHITECTURE AFTER MODULE 6
+
+scanner.py
+    ↓
+Scans files + metadata
+
+classifier.py
+    ↓
+Determines category
+
+organizer.py
+    ↓
+organizes a batch
+    ↓
+organize_file()
+
+conflict_handler.py
+    ↓
+Generates unique destination names
+
+summary
+    ↓
+Reports total / organized / failed
+
+15. INTERVIEW / VIVA QUESTIONS
+
+Q1. Why do we need batch processing?
+Answer: To process multiple files automatically instead of moving each file manually.
+
+Q2. What is the purpose of organize_folder()?
+Answer: It processes a complete list of files and calls organize_file() for each file.
+
+Q3. Why use try/except inside the loop?
+Answer: So one file failure does not stop the processing of other files.
+
+Q4. What is function composition?
+Answer: Building a larger operation by calling smaller reusable functions.
+
+Q5. Why store results in a list?
+Answer: To keep the status and output of every processed file for later use by the API or frontend.
+
+Q6. What does len() do?
+Answer: It returns the number of items in a collection.
+
+Q7. How does sum() help in the summary?
+Answer: It counts items that satisfy a condition using a generator expression.
+
+Q8. What is exception handling?
+Answer: A mechanism for handling runtime errors without crashing the complete application.
+
+NEXT MODULE
+Module 7 will connect the organization engine to a FastAPI endpoint so the frontend can request scanning, preview, and organization through the backend API.

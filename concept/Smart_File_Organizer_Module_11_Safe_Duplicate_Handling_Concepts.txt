@@ -1,0 +1,132 @@
+SMART FILE ORGANIZER — MODULE 11 CONCEPT NOTES
+Safe Duplicate Handling
+
+1. Module Goal
+Module 11 extends duplicate detection into a safe, non-destructive workflow.
+
+Flow:
+Detect duplicates → identify original → create preview → user chooses duplicate → move duplicate to Duplicates/ → keep original safe
+
+2. Non-Destructive Design
+The system does not automatically permanently delete duplicate files. Extra copies are moved to a dedicated Duplicates folder to reduce the risk of accidental data loss.
+
+3. Duplicate Manager
+File:
+backend/app/services/duplicate_manager.py
+
+Main functions:
+- move_duplicate_file()
+- create_duplicate_preview()
+
+4. move_duplicate_file()
+This function checks that the file exists, creates a Duplicates folder, creates a destination path, uses conflict handling, moves the file with shutil.move(), and returns the new path.
+
+5. Conflict Handling
+get_unique_destination() is reused. If the destination filename already exists, a unique filename such as file (1).txt is generated instead of overwriting the existing file.
+
+6. Duplicate Preview
+create_duplicate_preview() does not move files. It returns:
+- original
+- duplicate
+- destination
+- action
+
+7. Original Selection
+For each duplicate hash group, the first file is treated as the original. The remaining files are treated as duplicates that can be moved.
+
+8. FastAPI Endpoints
+POST /organizer/duplicate-preview
+POST /organizer/move-duplicate
+
+duplicate-preview calculates what would happen. move-duplicate performs the selected move.
+
+9. React Integration
+The API service contains getDuplicatePreview(path) and moveDuplicate(path). React displays the preview and provides a Move Duplicate button for duplicate entries.
+
+10. React State Update
+After a duplicate is successfully moved, React removes that duplicate from the current preview while the original remains safe.
+
+11. Scanner Safety Fix
+The scanner was updated to ignore files inside Duplicates folders. This prevents repeated processing and nested Duplicates/Duplicates/... paths.
+
+12. Why Exclude Duplicates?
+The Duplicates folder is an output/holding location, not a source location for normal organization. Files inside it should not be repeatedly processed.
+
+13. Important Python Concepts
+- pathlib.Path
+- exists()
+- mkdir()
+- parent
+- shutil.move()
+- lists
+- dictionaries
+- loops
+- functions
+- exception handling
+- reusable services
+
+14. Important Software Concepts
+- Non-destructive file management
+- Preview before action
+- User confirmation
+- Conflict handling
+- Separation of services
+- REST API
+- React state
+- API integration
+- Safety checks
+
+15. Testing Lessons
+Recursive scanning initially caused nested Duplicates folders. The problem was fixed by excluding paths containing a Duplicates directory. This shows why software must consider side effects of its own output being scanned again.
+
+16. Interview / Viva Questions
+
+Q1. Why should duplicate files not be automatically deleted?
+A. Automatic deletion can cause accidental data loss, so a safer approach is to move duplicates or require user confirmation.
+
+Q2. What is a non-destructive operation?
+A. An operation that avoids permanently destroying the original data.
+
+Q3. Why use shutil.move()?
+A. It provides a simple way to move files from one location to another.
+
+Q4. Why use get_unique_destination()?
+A. To prevent overwriting a file with the same name in the destination.
+
+Q5. What is duplicate preview?
+A. A representation of the original file, duplicate file, destination, and proposed action before movement.
+
+Q6. Why keep the first file as the original?
+A. It provides a deterministic rule for selecting one copy to preserve.
+
+Q7. Why exclude Duplicates from scanning?
+A. Otherwise previously moved duplicates can be processed repeatedly and create nested Duplicates folders.
+
+Q8. What is the difference between preview and action?
+A. Preview only calculates and displays the proposed operation; the action actually moves the file.
+
+Q9. Why separate duplicate_manager.py from duplicate_detector.py?
+A. Detector identifies duplicates, while manager performs safe file operations. This separates responsibilities.
+
+Q10. What safety feature prevents overwriting?
+A. get_unique_destination() generates a unique filename when a destination already exists.
+
+17. Module 11 Final Architecture
+
+Scanner
+   ↓
+Duplicate Detector
+   ↓
+Duplicate Preview
+   ↓
+React Review
+   ↓
+User selects duplicate
+   ↓
+Move Duplicate API
+   ↓
+Duplicate Manager
+   ↓
+Duplicates/
+
+END OF MODULE 11

@@ -1,0 +1,168 @@
+SMART FILE ORGANIZER
+MODULE 15 — UNDO SYSTEM
+Concepts + Viva Notes
+
+GOAL
+The Undo System reverses the most recent file movement and restores the file to its original location.
+
+Example:
+test_file/report.pdf
+→ test_file/Documents/report.pdf
+
+Undo:
+test_file/Documents/report.pdf
+→ test_file/report.pdf
+
+1. UNDO_HISTORY
+A Python list stores movement records temporarily.
+
+Example:
+[
+    {
+        "source": "test_file/report.pdf",
+        "destination": "test_file/Documents/report.pdf"
+    }
+]
+
+2. add_undo_record()
+Saves the original source path and the new destination path after a successful file move.
+
+3. get_undo_history()
+Returns the currently stored undo records.
+
+4. undo_last_action()
+Takes the latest record, checks that the moved file exists, recreates the original parent folder if necessary, and moves the file back.
+
+5. LIFO / STACK CONCEPT
+Undo uses Last In, First Out.
+
+Example:
+Move A
+Move B
+Move C
+↓
+Undo
+↓
+C is undone first
+
+This is the same basic behavior as a stack.
+
+6. SAFETY
+The undo operation checks that the destination file exists before moving it.
+It also creates the original parent directory using:
+mkdir(parents=True, exist_ok=True)
+
+7. ORGANIZER INTEGRATION
+After shutil.move() succeeds, organize_file() calls add_undo_record().
+
+Important:
+The undo record is added AFTER the successful move.
+This prevents a failed move from creating a false undo record.
+
+8. FASTAPI
+POST /organizer/undo
+Reverses the most recent recorded file movement.
+
+If no action exists:
+404 No action available to undo.
+
+9. REACT
+undoLastAction() in api.js calls:
+POST /organizer/undo
+
+Organizer.jsx contains handleUndo() and an Undo Last Action button.
+
+10. COMPLETE FLOW
+User organizes a file
+→ shutil.move()
+→ add_undo_record()
+→ Undo history
+→ User clicks Undo
+→ FastAPI /organizer/undo
+→ undo_last_action()
+→ File moves back
+→ Success message
+
+11. IMPORTANT LIMITATION
+Undo history is currently stored in memory.
+If the backend restarts, the history is lost.
+
+Permanent undo history will be stored in SQLite + SQLAlchemy in Module 16.
+
+12. TESTS COMPLETED
+✓ Undo manager creation
+✓ Move + undo record
+✓ Undo last action
+✓ Organizer integration
+✓ FastAPI undo endpoint
+✓ React API integration
+✓ Undo button
+✓ Browser end-to-end test
+✓ File restored to original location
+
+13. ADVANTAGES
+1. Users can reverse accidental organization.
+2. Protects against unwanted file movement.
+3. Simple stack-based design.
+4. Fast in-memory operation.
+5. Integrates with normal organizer operations.
+6. Provides a better user experience.
+7. Can later be persisted in a database.
+
+14. LIMITATIONS
+1. History is lost after backend restart.
+2. Current system focuses on the latest action.
+3. File permissions can prevent restoration.
+4. External changes to files can affect undo.
+5. Database persistence is not implemented yet.
+
+15. APPLICATIONS
+1. File management tools.
+2. Download organizers.
+3. Desktop cleanup applications.
+4. Document management systems.
+5. Backup/restore utilities.
+
+16. VIVA QUESTIONS
+
+Q1. What is the purpose of the Undo System?
+A: To reverse a previous file movement and restore the file to its original path.
+
+Q2. Which data structure is used?
+A: A Python list used with LIFO/stack behavior.
+
+Q3. What does LIFO mean?
+A: Last In, First Out.
+
+Q4. Why is the undo record added after shutil.move()?
+A: So a failed move does not create an invalid undo record.
+
+Q5. What information is stored?
+A: The original source path and the new destination path.
+
+Q6. What happens if there is no undo history?
+A: The API returns a 404 response indicating that no action is available to undo.
+
+Q7. Why use Path.exists()?
+A: To verify that the moved file still exists before restoring it.
+
+Q8. Why use mkdir(parents=True, exist_ok=True)?
+A: To safely recreate missing original directories without errors if they already exist.
+
+Q9. Is the undo history permanent?
+A: No. It is currently stored in memory.
+
+Q10. How will permanent history be implemented?
+A: Using SQLite and SQLAlchemy in Module 16.
+
+Q11. Which API performs undo?
+A: POST /organizer/undo.
+
+Q12. How does React trigger undo?
+A: The undoLastAction() Axios function calls the FastAPI endpoint.
+
+MODULE 15 STATUS
+COMPLETED
+
+NEXT MODULE
+Module 16 — SQLite Database + SQLAlchemy

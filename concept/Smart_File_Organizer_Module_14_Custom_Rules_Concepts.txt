@@ -1,0 +1,119 @@
+SMART FILE ORGANIZER
+MODULE 14 — CUSTOM RULES
+Concepts + Viva Notes
+
+GOAL
+Custom Rules let users decide which category an extension belongs to.
+Examples: .xlsx → Work, .csv → Data.
+
+1. CUSTOM_RULES
+A Python dictionary temporarily stores rules:
+{".xlsx": "Work", ".csv": "Data"}
+
+2. add_rule()
+Normalizes the extension, adds "." when needed, and stores the category.
+
+3. get_rule()
+Returns the custom category for an extension, or None if no rule exists.
+
+4. get_all_rules()
+Returns all current custom rules.
+
+5. delete_rule()
+Removes an existing rule and returns True; otherwise returns False.
+
+6. CLASSIFIER PRIORITY
+classify_file() checks the custom rule FIRST.
+If one exists, its category is returned.
+Otherwise the default FILE_CATEGORIES mapping is used.
+Unknown extensions become Others.
+
+Flow:
+Extension → Custom Rule? → Custom category
+                     ↓ No
+                Default classifier → Others if unknown
+
+7. FASTAPI
+POST /organizer/rules = add rule
+GET /organizer/rules = view rules
+DELETE /organizer/rules = delete rule
+
+8. REACT
+addRule(), getRules(), and deleteRule() call the FastAPI endpoints through Axios.
+RuleManager.jsx provides extension/category inputs, Add Rule, current rules, Delete, and messages.
+
+9. ACTIVITY LOGGING
+Rule changes are recorded, e.g.:
+Custom rule added: .csv -> Data
+Custom rule deleted: .xlsx
+
+10. IMPORTANT LIMITATION
+Rules are currently stored in memory, so they disappear when the backend restarts.
+Permanent storage will be implemented with SQLite + SQLAlchemy in Module 16.
+
+11. TESTS COMPLETED
+✓ Add rule
+✓ Get rule
+✓ Get all rules
+✓ Delete rule
+✓ Custom rule priority
+✓ Scanner classification
+✓ FastAPI APIs
+✓ React integration
+✓ Activity logging
+✓ End-to-end .csv → Data test
+
+12. ADVANTAGES
+1. User customization.
+2. Custom rules override defaults.
+3. No classifier-code change is needed for new rules.
+4. Rules can be added/deleted.
+5. Rules are visible in the UI.
+6. Changes are logged.
+7. Easy future database integration.
+
+13. LIMITATIONS
+1. Rules are temporary.
+2. No database persistence yet.
+3. Category validation is basic.
+4. Current UI is basic; final polish is later.
+
+14. APPLICATIONS
+Office files, downloads, project files, data files, media, and personal workspace organization.
+
+15. VIVA QUESTIONS
+Q1. What is a custom rule?
+A: A user-defined mapping from a file extension to a category.
+
+Q2. Which data structure stores rules?
+A: A Python dictionary called CUSTOM_RULES.
+
+Q3. Which rule has priority?
+A: The custom rule has priority over the default classifier.
+
+Q4. Why lowercase extensions?
+A: To treat .PDF and .pdf consistently.
+
+Q5. What happens for an unknown extension?
+A: It is classified as Others.
+
+Q6. Are rules permanent?
+A: No. They are currently stored in memory.
+
+Q7. Which API adds a rule?
+A: POST /organizer/rules.
+
+Q8. Which API gets rules?
+A: GET /organizer/rules.
+
+Q9. Which API deletes a rule?
+A: DELETE /organizer/rules.
+
+Q10. Why use React state?
+A: To store form values, rules, and UI messages.
+
+Q11. Why log rule changes?
+A: For history, debugging, and auditing.
+
+MODULE 14 STATUS: COMPLETED
+NEXT: MODULE 15 — UNDO SYSTEM

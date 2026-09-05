@@ -1,0 +1,507 @@
+SMART FILE ORGANIZER
+MODULE 2 - FILE SCANNER CONCEPT NOTES
+
+==================================================
+1. MODULE GOAL
+==================================================
+
+The File Scanner is the first real feature of Smart File Organizer.
+
+Its job is to scan a selected folder and collect basic information about files.
+
+It does NOT move, rename, delete, or modify files.
+
+Example:
+
+test_file/
+    resume.pdf
+    photo.jpg
+    song.mp3
+    code.py
+
+Scanner result:
+
+resume.pdf -> .pdf
+photo.jpg  -> .jpg
+song.mp3   -> .mp3
+code.py    -> .py
+
+
+==================================================
+2. pathlib
+==================================================
+
+Python provides the pathlib module for working with file and folder paths.
+
+We use:
+
+    from pathlib import Path
+
+Path makes file-system operations easier and more readable.
+
+Example:
+
+    folder = Path("test_file")
+
+
+==================================================
+3. PATH OBJECT
+==================================================
+
+Path("test_file") converts the folder path into a Path object.
+
+A Path object provides useful methods such as:
+
+    exists()
+    is_dir()
+    is_file()
+    iterdir()
+
+This is safer and cleaner than manually manipulating path strings.
+
+
+==================================================
+4. FOLDER VALIDATION
+==================================================
+
+Our scanner first checks whether the supplied path exists.
+
+    if not folder.exists():
+        raise FileNotFoundError("Folder does not exist.")
+
+If the path does not exist, the scanner stops and raises an error.
+
+It also checks whether the path is actually a directory:
+
+    if not folder.is_dir():
+        raise NotADirectoryError("Provided path is not a folder.")
+
+This prevents a file path from being treated as a folder.
+
+
+==================================================
+5. DIRECTORY TRAVERSAL WITH iterdir()
+==================================================
+
+iterdir() returns the items directly inside a directory.
+
+Example:
+
+    for item in folder.iterdir():
+        print(item)
+
+If the folder contains:
+
+    resume.pdf
+    photo.jpg
+    Documents/
+
+iterdir() can return all three items.
+
+At this stage our scanner only processes direct children.
+
+
+==================================================
+6. FILE VS DIRECTORY
+==================================================
+
+We use:
+
+    item.is_file()
+
+to check whether an item is a file.
+
+Example:
+
+    if item.is_file():
+        ...
+
+If an item is a folder, it is ignored by our current scanner.
+
+This distinction is important because our organizer should operate on files, not accidentally treat directories as files.
+
+
+==================================================
+7. FILE NAME
+==================================================
+
+We use:
+
+    item.name
+
+Example:
+
+    resume.pdf
+
+This returns only the file name, not the complete path.
+
+
+==================================================
+8. FILE EXTENSION
+==================================================
+
+We use:
+
+    item.suffix
+
+Example:
+
+    resume.pdf -> .pdf
+    photo.jpg  -> .jpg
+    code.py    -> .py
+
+We use:
+
+    item.suffix.lower()
+
+so extensions are normalized.
+
+Example:
+
+    .PDF -> .pdf
+    .JPG -> .jpg
+
+This helps classification later.
+
+
+==================================================
+9. FILE PATH
+==================================================
+
+We use:
+
+    str(item)
+
+to convert the Path object into a normal string.
+
+The scanner stores the path so later modules know exactly which file they are working with.
+
+
+==================================================
+10. LIST DATA STRUCTURE
+==================================================
+
+We start with:
+
+    files = []
+
+This creates an empty Python list.
+
+For every detected file, we append a dictionary:
+
+    files.append({
+        "name": item.name,
+        "extension": item.suffix.lower(),
+        "path": str(item),
+    })
+
+A dictionary stores related information using key-value pairs.
+
+Example:
+
+    {
+        "name": "resume.pdf",
+        "extension": ".pdf",
+        "path": "test_file\resume.pdf"
+    }
+
+
+==================================================
+11. RETURN VALUE
+==================================================
+
+At the end:
+
+    return files
+
+The function returns a list containing information about all detected files.
+
+Example:
+
+    [
+        {
+            "name": "code.py",
+            "extension": ".py",
+            "path": "test_file\code.py"
+        },
+        ...
+    ]
+
+
+==================================================
+12. COMPLETE SCANNER LOGIC
+==================================================
+
+Input:
+    Folder path
+
+        |
+        v
+
+Convert string to Path
+
+        |
+        v
+
+Does path exist?
+    NO -> FileNotFoundError
+    YES
+        |
+        v
+
+Is it a directory?
+    NO -> NotADirectoryError
+    YES
+        |
+        v
+
+Read directory items
+
+        |
+        v
+
+Is item a file?
+    NO -> Ignore
+    YES
+        |
+        v
+
+Collect:
+    name
+    extension
+    path
+
+        |
+        v
+
+Return list
+
+
+==================================================
+13. CURRENT scanner.py
+==================================================
+
+    from pathlib import Path
+
+
+    def scan_folder(folder_path: str):
+        folder = Path(folder_path)
+
+        if not folder.exists():
+            raise FileNotFoundError("Folder does not exist.")
+
+        if not folder.is_dir():
+            raise NotADirectoryError("Provided path is not a folder.")
+
+        files = []
+
+        for item in folder.iterdir():
+            if item.is_file():
+                files.append({
+                    "name": item.name,
+                    "extension": item.suffix.lower(),
+                    "path": str(item),
+                })
+
+        return files
+
+
+==================================================
+14. IMPORTANT LIMITATION
+==================================================
+
+The current scanner is NOT recursive.
+
+Example:
+
+    test_file/
+        resume.pdf
+        photo.jpg
+        Documents/
+            notes.txt
+
+Current result:
+
+    resume.pdf -> detected
+    photo.jpg  -> detected
+    Documents/ -> ignored
+    notes.txt  -> NOT detected
+
+Later we can add recursive scanning so the organizer can inspect subfolders when required.
+
+
+==================================================
+15. WHY SCANNER IS IMPORTANT
+==================================================
+
+The scanner is the foundation of the project.
+
+The later workflow will be:
+
+    Scanner
+       |
+       v
+    File Information
+       |
+       v
+    Classification
+       |
+       v
+    Category
+       |
+       v
+    Preview / Dry Run
+       |
+       v
+    Organizer
+       |
+       v
+    File System
+
+Without scanning, the application does not know which files exist or what their extensions are.
+
+
+==================================================
+16. SAFETY CONCEPT
+==================================================
+
+During development we tested using a dummy folder.
+
+This is important because file operations can be destructive.
+
+The scanner itself is read-only:
+
+    It reads information.
+    It does not move files.
+    It does not delete files.
+    It does not rename files.
+
+We should continue testing future organizer features on dummy files before using real personal folders.
+
+
+==================================================
+17. PYTHON CONCEPTS LEARNED
+==================================================
+
+1. Importing a module/class
+2. Functions
+3. Function parameters
+4. Type hints
+5. Path objects
+6. if conditions
+7. for loops
+8. Lists
+9. Dictionaries
+10. list.append()
+11. return
+12. Exceptions
+13. File-system operations
+
+
+==================================================
+18. INTERVIEW / VIVA QUESTIONS
+==================================================
+
+Q1. What is pathlib?
+
+A. pathlib is a Python standard-library module used to work with file-system paths.
+
+
+Q2. What is a Path object?
+
+A. It represents a file or directory path and provides methods for file-system operations.
+
+
+Q3. What does exists() do?
+
+A. It checks whether the specified path exists.
+
+
+Q4. What does is_dir() do?
+
+A. It checks whether a Path represents a directory.
+
+
+Q5. What does is_file() do?
+
+A. It checks whether a Path represents a file.
+
+
+Q6. What does iterdir() do?
+
+A. It returns the items directly inside a directory.
+
+
+Q7. What does suffix return?
+
+A. It returns the file extension, such as .pdf or .jpg.
+
+
+Q8. Why do we use lower() on the extension?
+
+A. To normalize extensions so .PDF and .pdf are treated consistently.
+
+
+Q9. Why do we use a list?
+
+A. To store information about multiple scanned files.
+
+
+Q10. Why do we use dictionaries?
+
+A. To store related properties of each file using meaningful keys.
+
+
+Q11. Is our current scanner recursive?
+
+A. No. It scans only the direct items inside the selected directory.
+
+
+Q12. Does the scanner modify files?
+
+A. No. The current scanner only reads file information.
+
+
+==================================================
+19. MODULE STATUS
+==================================================
+
+Module:
+    File Scanner
+
+Status:
+    COMPLETED AND TESTED
+
+Test folder:
+    test_file
+
+Test files:
+    code.py
+    photo.jpg
+    resume.pdf
+    song.mp3
+
+Result:
+    All four files were detected successfully.
+
+
+==================================================
+20. NEXT MODULE
+==================================================
+
+Next we will improve the scanner and prepare the data for
+classification.
+
+Topics will include:
+
+    - Recursive scanning
+    - File metadata
+    - File size
+    - File creation/modification information
+    - Handling hidden/system/problematic files
+    - Better error handling
+    - Preparing clean scanner results
+
+==================================================
+END OF MODULE 2 NOTES
+==================================================

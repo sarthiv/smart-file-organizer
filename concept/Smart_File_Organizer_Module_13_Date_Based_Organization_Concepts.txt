@@ -1,0 +1,161 @@
+SMART FILE ORGANIZER
+MODULE 13 — DATE-BASED ORGANIZATION
+Concepts, Code Understanding & Viva Questions
+
+MODULE GOAL
+Organize files using their category and last modified date.
+
+Example:
+Documents/2026/September/report.pdf
+Images/2026/September/photo.jpg
+
+KEY CONCEPTS
+1. pathlib.Path — handles file and folder paths.
+2. Path.stat() — reads file metadata.
+3. st_mtime — gives the last modified timestamp.
+4. datetime.fromtimestamp() — converts timestamp to datetime.
+5. strftime("%Y") — extracts the year.
+6. strftime("%B") — extracts the full month name.
+7. mkdir(parents=True, exist_ok=True) — safely creates nested folders.
+8. shutil.move() — moves a file.
+9. get_unique_destination() — prevents filename conflicts.
+10. Path.resolve() — compares actual absolute paths safely.
+
+DATE LOGIC
+The project reads the file's modified time and generates:
+YEAR/MONTH
+
+For example:
+2026/September
+
+DESTINATION LOGIC
+A file is placed under:
+CATEGORY/YEAR/MONTH/FILENAME
+
+Example:
+test_file/report.txt
+→ test_file/Documents/2026/September/report.txt
+
+SAFETY
+The project checks whether the file is already inside its category folder.
+This prevents paths such as:
+Documents/Documents/2026/September
+Code/Code/2026/September
+
+If the file is already at the correct destination, it is not moved again.
+
+FILENAME CONFLICTS
+Existing files are never overwritten.
+Example:
+report.txt
+report (1).txt
+report (2).txt
+
+PREVIEW
+The date-preview API shows:
+- file name
+- category
+- source
+- destination
+- action
+
+FASTAPI ENDPOINTS
+POST /organizer/date-preview
+Creates a preview.
+
+POST /organizer/organize-by-date
+Organizes files using category/year/month.
+
+REACT
+getDatePreview(path) calls the preview API.
+organizeByDate(path) calls the organization API.
+React stores and displays preview information.
+
+COMPLETE FLOW
+User enters folder
+→ React
+→ FastAPI
+→ Scanner
+→ Category classifier
+→ Date organizer
+→ Conflict handler
+→ File movement
+→ Activity logger
+
+ADVANTAGES
+1. Automatic date-based organization.
+2. Easier file searching.
+3. Automatic year/month folder creation.
+4. Less manual work.
+5. Works with category-based organization.
+6. Prevents repeated category folders.
+7. Prevents filename overwriting.
+
+LIMITATIONS
+1. Modified date may not equal actual creation date.
+2. Large folders may take longer to scan.
+3. Permissions can prevent file movement.
+4. Incorrect system time can affect organization.
+5. Many files can create many date folders.
+
+APPLICATIONS
+1. Download management.
+2. Photo/video organization.
+3. Document management.
+4. Backup organization.
+5. Office file management.
+6. Project archives.
+
+VIVA QUESTIONS
+Q1. Why use pathlib?
+A: It provides convenient, platform-independent file path handling.
+
+Q2. Which date is used?
+A: Last modified time using st_mtime.
+
+Q3. What is st_mtime?
+A: The file's last modification timestamp.
+
+Q4. Why use strftime("%Y")?
+A: To extract the four-digit year.
+
+Q5. Why use strftime("%B")?
+A: To get the full month name.
+
+Q6. What does parents=True do?
+A: Creates missing parent directories.
+
+Q7. What does exist_ok=True do?
+A: Avoids an error if the directory already exists.
+
+Q8. Why use shutil.move()?
+A: To move the file to its destination.
+
+Q9. How is Documents/Documents prevented?
+A: The code checks whether the file is already inside the category folder.
+
+Q10. How are filename conflicts handled?
+A: Unique names such as report (1).txt are generated.
+
+Q11. What is date-preview?
+A: A preview of planned file movements before actual organization.
+
+Q12. Why is logging useful?
+A: It records operations for history and debugging.
+
+MODULE STATUS
+Module 13 — Date-Based Organization: COMPLETED
+
+Tested:
+✓ Date folder generation
+✓ Category + date destination
+✓ Existing category safety
+✓ Already-organized file safety
+✓ Actual movement
+✓ Filename conflict handling
+✓ FastAPI integration
+✓ React integration
+✓ Activity logging
+
+NEXT MODULE
+Module 14 — Custom Rules

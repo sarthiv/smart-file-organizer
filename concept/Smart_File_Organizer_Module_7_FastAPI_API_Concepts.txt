@@ -1,0 +1,217 @@
+SMART FILE ORGANIZER
+MODULE 7 — FASTAPI API INTEGRATION
+CONCEPT NOTES
+
+1. MODULE GOAL
+Module 7 exposes the Smart File Organizer service layer through FastAPI REST endpoints.
+
+The frontend will later communicate with:
+    POST /organizer/scan
+    POST /organizer/organize
+
+2. APIRouter
+FastAPI's APIRouter groups related API routes.
+
+Example:
+    router = APIRouter(
+        prefix="/organizer",
+        tags=["Organizer"]
+    )
+
+prefix="/organizer" makes the routes:
+    /organizer/scan
+    /organizer/organize
+
+3. include_router()
+main.py uses:
+    app.include_router(organizer_router)
+
+This registers the organizer routes with the main FastAPI application.
+
+Without include_router(), the organizer endpoints would not be available.
+
+4. HTTP POST
+The organizer endpoints use POST because the client sends structured input and the organize operation can modify the filesystem.
+
+5. PYDANTIC REQUEST MODEL
+File:
+    app/schemas/organizer.py
+
+Model:
+    class FolderRequest(BaseModel):
+        path: str
+
+This defines the expected request body.
+
+Example JSON:
+    {
+        "path": "test_file"
+    }
+
+6. REQUEST VALIDATION
+Pydantic validates and structures incoming API data before the endpoint uses it.
+
+The endpoint receives:
+    request: FolderRequest
+
+and accesses:
+    request.path
+
+7. API SERVICE SEPARATION
+The API layer does not contain the complete file-processing logic.
+
+Instead:
+    API
+      ↓
+    scanner.py
+      ↓
+    classifier.py
+      ↓
+    organizer.py
+      ↓
+    conflict_handler.py
+
+This is separation of concerns.
+
+8. SCAN ENDPOINT
+Endpoint:
+    POST /organizer/scan
+
+It:
+- receives a folder path
+- scans the folder
+- classifies files
+- returns file information as JSON
+
+Response includes:
+    status
+    total_files
+    files
+
+9. ORGANIZE ENDPOINT
+Endpoint:
+    POST /organizer/organize
+
+It:
+- receives a folder path
+- scans files
+- organizes the files
+- handles filename conflicts
+- returns results
+
+10. HTTPException
+FastAPI's HTTPException is used to return controlled HTTP errors.
+
+For a missing folder:
+    404 Not Found
+
+For a path that is not a directory:
+    400 Bad Request
+
+11. TRY / EXCEPT IN API
+The API catches service-layer errors and converts them into meaningful HTTP responses.
+
+Example:
+    FileNotFoundError
+        ↓
+    HTTPException(status_code=404)
+
+This prevents raw internal errors from being exposed as uncontrolled API failures.
+
+12. SWAGGER / OPENAPI TESTING
+FastAPI automatically provides interactive API documentation at:
+    /docs
+
+We used Swagger to test:
+    POST /organizer/scan
+    POST /organizer/organize
+
+We tested valid JSON requests and an invalid folder path.
+
+13. TESTS COMPLETED
+Valid scan request:
+    {
+        "path": "test_file"
+    }
+    -> successful response
+
+Valid organize request:
+    {
+        "path": "test_file"
+    }
+    -> successful response
+
+Invalid folder:
+    {
+        "path": "this_folder_does_not_exist"
+    }
+    -> 404 Not Found
+
+14. IMPORTANT PYTHON / FASTAPI CONCEPTS LEARNED
+- APIRouter
+- route prefixes
+- include_router()
+- POST endpoints
+- Pydantic BaseModel
+- request body
+- type annotations
+- HTTPException
+- try/except
+- REST API
+- JSON responses
+- Swagger/OpenAPI
+- separation of concerns
+- service-layer architecture
+
+15. VIVA / INTERVIEW QUESTIONS
+
+Q1. What is APIRouter?
+Answer: A FastAPI class used to organize related routes into separate modules.
+
+Q2. Why do we use include_router()?
+Answer: To register routes from an APIRouter with the main FastAPI application.
+
+Q3. What is Pydantic?
+Answer: A Python data-validation library used by FastAPI for structured request and response data.
+
+Q4. What is BaseModel?
+Answer: The Pydantic base class used to define validated data models.
+
+Q5. Why use POST for organize?
+Answer: The client sends data and the operation can modify filesystem state.
+
+Q6. What is HTTPException?
+Answer: FastAPI's mechanism for returning controlled HTTP errors.
+
+Q7. What does HTTP 404 mean?
+Answer: The requested resource could not be found. In our case, the requested folder does not exist.
+
+Q8. What is separation of concerns?
+Answer: Keeping different responsibilities in different modules, such as API, scanner, classifier, and organizer.
+
+Q9. What is Swagger?
+Answer: An interactive interface generated from OpenAPI that allows developers to inspect and test API endpoints.
+
+Q10. Why should API logic and business logic be separated?
+Answer: It improves maintainability, testing, reuse, and project organization.
+
+16. ARCHITECTURE AFTER MODULE 7
+
+React Frontend
+      ↓
+FastAPI API
+      ↓
+Pydantic validation
+      ↓
+API Router
+      ↓
+Service Layer
+      ├── scanner.py
+      ├── classifier.py
+      ├── organizer.py
+      └── conflict_handler.py
+      ↓
+Local File System
+
+NEXT MODULE
+Module 8 will connect the React frontend to these FastAPI endpoints using Axios.

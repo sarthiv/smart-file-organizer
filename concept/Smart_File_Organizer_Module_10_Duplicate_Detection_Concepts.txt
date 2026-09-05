@@ -1,0 +1,111 @@
+SMART FILE ORGANIZER — MODULE 10 CONCEPT NOTES
+Duplicate File Detection using SHA-256
+
+1. Module Goal
+This module adds duplicate file detection to Smart File Organizer.
+The system compares file content instead of only filenames.
+
+Flow:
+Files → Binary chunks → SHA-256 hash → Group same hashes → Count > 1 → Duplicate
+
+2. hashlib
+Python's built-in hashlib module provides hashing algorithms.
+Import:
+import hashlib
+
+3. SHA-256
+SHA-256 creates a fixed-length hash from file content. Identical content produces the same hash.
+
+4. Binary File Reading
+open(file_path, "rb")
+"rb" means read binary. This supports PDFs, images, audio, archives, and other binary files.
+
+5. Reading in Chunks
+file.read(4096) reads 4096 bytes at a time, avoiding unnecessary memory usage for large files.
+
+6. calculate_file_hash()
+This function creates a SHA-256 object, reads the file in chunks, updates the hash, and returns hexdigest().
+
+7. defaultdict
+defaultdict(list) automatically creates an empty list for a new hash key.
+Example:
+hash1 → [file1, file2]
+
+8. find_duplicates()
+The function calculates a hash for each existing file, groups files by hash, and returns only groups containing more than one file.
+
+9. Duplicate Group
+Each group contains:
+- hash
+- files
+- count
+
+10. Testing Lesson
+Empty files have the same SHA-256 hash because they contain identical zero-byte content. This was observed during testing and fixed by adding different test content.
+
+11. FastAPI Integration
+Endpoint:
+POST /organizer/duplicates
+
+Request:
+{"path": "test_file"}
+
+The endpoint scans the folder and calls find_duplicates().
+
+12. React Integration
+The frontend API service contains findDuplicates(path). React calls the backend and stores the response using setDuplicates(data.duplicates).
+
+13. React Display
+Nested map() is used:
+duplicates.map(...)
+group.files.map(...)
+
+The first map displays duplicate groups; the second displays files inside each group.
+
+14. Error Handling
+try/catch/finally is used to handle API failures and loading state.
+
+15. Key Concepts
+- Hashing
+- SHA-256
+- hashlib
+- Binary file reading
+- File chunks
+- hexdigest()
+- defaultdict
+- Dictionary grouping
+- Duplicate detection
+- FastAPI
+- Axios
+- React state
+- Nested map()
+
+16. Viva Questions
+Q1. What is hashing?
+A. Converting data into a fixed-length value that acts as a content fingerprint.
+
+Q2. Why use SHA-256?
+A. It provides a reliable content-based hash for comparing files.
+
+Q3. Why use "rb"?
+A. Files can contain binary data, so they must be read as bytes.
+
+Q4. Why read in chunks?
+A. To reduce memory usage for large files.
+
+Q5. Can different filenames be duplicates?
+A. Yes. Duplicate detection is based on content.
+
+Q6. What is defaultdict?
+A. A dictionary that automatically creates a default value for missing keys.
+
+Q7. What does hexdigest() do?
+A. Returns the hash as readable hexadecimal text.
+
+Q8. Why can empty files be duplicates?
+A. All empty files have identical zero-byte content and therefore the same SHA-256 hash.
+
+Q9. What endpoint was added?
+A. POST /organizer/duplicates.
+
+END OF MODULE 10

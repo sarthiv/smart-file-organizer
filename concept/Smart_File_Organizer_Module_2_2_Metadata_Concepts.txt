@@ -1,0 +1,382 @@
+SMART FILE ORGANIZER
+MODULE 2.2 - RECURSIVE SCANNING AND FILE METADATA
+
+==================================================
+1. WHAT WE ADDED
+==================================================
+
+The scanner was improved with:
+
+- Recursive folder scanning
+- File size
+- Creation time
+- Modification time
+
+The scanner now finds files inside subfolders too.
+
+Example:
+
+test_file/
+    code.py
+    photo.jpg
+    Documents/
+        notes.txt
+
+The scanner can detect notes.txt as well.
+
+
+==================================================
+2. RECURSIVE SCANNING
+==================================================
+
+Recursive scanning means checking a folder and all of its
+subfolders.
+
+We use:
+
+    folder.rglob("*")
+
+rglob() searches recursively through the directory tree.
+
+The "*" pattern means all items.
+
+
+==================================================
+3. iterdir() VS rglob()
+==================================================
+
+iterdir():
+
+    folder.iterdir()
+
+Only checks the immediate contents of a folder.
+
+Example:
+
+test_file/
+    a.txt
+    Documents/
+        b.txt
+
+iterdir() finds:
+    a.txt
+    Documents/
+
+It does not directly find b.txt.
+
+rglob("*") recursively searches and can find:
+    a.txt
+    Documents/
+    b.txt
+
+
+==================================================
+4. FILE METADATA
+==================================================
+
+Metadata means information about a file rather than its
+actual content.
+
+Our scanner collects:
+
+    name
+    extension
+    path
+    size
+    created_at
+    modified_at
+
+
+==================================================
+5. stat()
+==================================================
+
+We use:
+
+    file_info = item.stat()
+
+stat() provides information about the file.
+
+Important values used in our project:
+
+    file_info.st_size
+    file_info.st_ctime
+    file_info.st_mtime
+
+
+==================================================
+6. FILE SIZE
+==================================================
+
+We use:
+
+    file_info.st_size
+
+It returns the file size in bytes.
+
+Our dummy files are empty, so:
+
+    size = 0
+
+is expected.
+
+Later the frontend can convert bytes into KB, MB, or GB
+for better display.
+
+
+==================================================
+7. CREATED TIME
+==================================================
+
+We use:
+
+    file_info.st_ctime
+
+On Windows, this timestamp is commonly used as the
+creation-time value.
+
+We convert it into a readable date/time using:
+
+    datetime.fromtimestamp(file_info.st_ctime)
+
+
+==================================================
+8. MODIFIED TIME
+==================================================
+
+We use:
+
+    file_info.st_mtime
+
+It represents the last modification timestamp.
+
+We convert it using:
+
+    datetime.fromtimestamp(file_info.st_mtime)
+
+
+==================================================
+9. ISO FORMAT
+==================================================
+
+Our code uses:
+
+    .isoformat()
+
+This produces a standardized date/time string.
+
+Example:
+
+    2026-09-04T00:08:15.913331
+
+This format is useful for storing and transferring
+date/time values through APIs.
+
+
+==================================================
+10. WHY METADATA IS USEFUL
+==================================================
+
+Metadata will help Smart File Organizer provide features
+such as:
+
+- Sorting files by size
+- Sorting files by modified date
+- Date-based organization
+- Showing file information in the dashboard
+- Finding old files
+- Generating statistics
+
+
+==================================================
+11. CURRENT SCANNER FLOW
+==================================================
+
+Selected folder
+      |
+      v
+Check path exists
+      |
+      v
+Check path is directory
+      |
+      v
+Recursively scan with rglob()
+      |
+      v
+Check is_file()
+      |
+      v
+Read file metadata
+      |
+      v
+Create dictionary
+      |
+      v
+Add dictionary to list
+      |
+      v
+Return all scanned files
+
+
+==================================================
+12. CURRENT DATA STRUCTURE
+==================================================
+
+Each scanned file is represented as a dictionary:
+
+{
+    "name": "resume.pdf",
+    "extension": ".pdf",
+    "path": "test_file\resume.pdf",
+    "size": 0,
+    "created_at": "2026-09-04T00:02:08...",
+    "modified_at": "2026-09-04T00:02:08..."
+}
+
+
+==================================================
+13. CURRENT scanner.py
+==================================================
+
+    from pathlib import Path
+    from datetime import datetime
+
+
+    def scan_folder(folder_path: str):
+        folder = Path(folder_path)
+
+        if not folder.exists():
+            raise FileNotFoundError("Folder does not exist.")
+
+        if not folder.is_dir():
+            raise NotADirectoryError("Provided path is not a folder.")
+
+        files = []
+
+        for item in folder.rglob("*"):
+            if item.is_file():
+                file_info = item.stat()
+
+                files.append({
+                    "name": item.name,
+                    "extension": item.suffix.lower(),
+                    "path": str(item),
+                    "size": file_info.st_size,
+                    "created_at": datetime.fromtimestamp(
+                        file_info.st_ctime
+                    ).isoformat(),
+                    "modified_at": datetime.fromtimestamp(
+                        file_info.st_mtime
+                    ).isoformat(),
+                })
+
+        return files
+
+
+==================================================
+14. PYTHON CONCEPTS LEARNED
+==================================================
+
+1. pathlib.Path
+2. rglob()
+3. Recursive traversal
+4. File-system metadata
+5. stat()
+6. st_size
+7. st_ctime
+8. st_mtime
+9. datetime
+10. fromtimestamp()
+11. isoformat()
+12. Dictionaries
+13. Lists
+14. Exceptions
+15. Type hints
+
+
+==================================================
+15. INTERVIEW / VIVA QUESTIONS
+==================================================
+
+Q1. What is recursive scanning?
+A. Searching a directory and its subdirectories.
+
+Q2. What is rglob()?
+A. A pathlib method used for recursive pattern-based
+   searching.
+
+Q3. What is file metadata?
+A. Information describing a file, such as size and
+   timestamps, rather than the file's actual content.
+
+Q4. What does st_size return?
+A. File size in bytes.
+
+Q5. What does st_mtime represent?
+A. The last modification timestamp.
+
+Q6. What does st_ctime represent on Windows?
+A. It is commonly used as the file creation timestamp.
+
+Q7. Why use isoformat()?
+A. To represent date/time in a standardized string format.
+
+Q8. Does the scanner read file contents?
+A. No. It currently reads file-system information only.
+
+Q9. Does recursive scanning modify files?
+A. No. The scanner remains read-only.
+
+Q10. Why is metadata useful in our project?
+A. It enables sorting, date-based organization, statistics,
+    and richer file information in the UI.
+
+
+==================================================
+16. TEST RESULT
+==================================================
+
+Test folder:
+
+    test_file/
+
+Detected files:
+
+    code.py
+    photo.jpg
+    resume.pdf
+    song.mp3
+    Documents/notes.txt
+
+Result:
+
+    Recursive scanning and metadata collection are working.
+
+
+==================================================
+17. NEXT MODULE
+==================================================
+
+FILE CLASSIFICATION
+
+We will build the logic that decides which category a file
+belongs to.
+
+Examples:
+
+    .pdf  -> Documents
+    .docx -> Documents
+    .jpg  -> Images
+    .png  -> Images
+    .mp3  -> Music
+    .py   -> Code
+    .txt  -> Documents
+
+This classification will become the foundation of the
+actual file organization feature.
+
+
+==================================================
+END OF MODULE 2.2
+==================================================

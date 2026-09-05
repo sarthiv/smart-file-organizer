@@ -1,0 +1,177 @@
+SMART FILE ORGANIZER
+CONCEPT NOTES – FASTAPI BASIC BACKEND
+
+1. WHAT DID WE BUILD?
+We created the first basic backend using FastAPI.
+File: backend/app/main.py
+Endpoints:
+GET /
+GET /health
+
+2. WHAT IS A BACKEND?
+A backend handles application logic and communication between the UI and resources.
+Our flow:
+React Frontend -> FastAPI Backend -> Python File Logic -> File System
+
+3. WHAT IS FASTAPI?
+FastAPI is a Python web framework used to build APIs. It supports type hints and automatic interactive API documentation.
+
+4. WHAT IS AN API?
+An API is an interface that allows software components to communicate.
+Example:
+Frontend -> GET /health -> FastAPI -> JSON response
+
+5. WHAT IS A ROUTE / ENDPOINT?
+An endpoint is a URL path that performs a specific operation.
+Example:
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
+6. WHAT IS HTTP GET?
+GET is an HTTP method generally used to retrieve/read information.
+Common methods:
+GET -> Read
+POST -> Create
+PUT -> Update
+PATCH -> Partial update
+DELETE -> Delete
+
+7. WHAT IS UVICORN?
+Uvicorn is the server used to run our FastAPI application.
+Command:
+uvicorn app.main:app --reload
+
+app.main = app/main.py
+:app = the FastAPI object named app
+--reload = reload the server automatically when code changes
+
+Server:
+http://127.0.0.1:8000
+
+8. UNDERSTANDING main.py
+from fastapi import FastAPI
+Imports the FastAPI class.
+
+app = FastAPI(...)
+Creates the FastAPI application object.
+
+@app.get("/")
+Connects a GET request for / to the function below it.
+
+A returned Python dictionary is automatically sent as JSON.
+
+9. WHAT IS JSON?
+JSON means JavaScript Object Notation. It is commonly used to exchange data between frontend and backend.
+Example:
+{"status": "healthy"}
+
+10. WHAT IS /docs?
+FastAPI automatically provides interactive API documentation at:
+http://127.0.0.1:8000/docs
+It allows us to view and test endpoints.
+
+11. HTTP STATUS 200
+200 means the request was successful.
+Other important codes:
+201 -> Created
+400 -> Bad request
+401 -> Unauthorized
+403 -> Forbidden
+404 -> Not found
+500 -> Internal server error
+
+12. WHY DID /favicon.ico SHOW 404?
+Browsers may automatically request /favicon.ico. We did not create that resource, so 404 is normal and is not an API problem.
+
+13. WHAT IS 127.0.0.1?
+127.0.0.1 refers to the local computer. Our development server is available locally, not automatically on the public internet.
+
+14. WHAT IS A VIRTUAL ENVIRONMENT?
+A venv creates an isolated Python environment for a project.
+Our project has:
+backend/venv/
+This keeps project dependencies separate from other projects.
+
+Activation:
+.\venv\Scripts\Activate.ps1
+
+15. WHY USE A VENV?
+Different projects can require different package versions. A virtual environment helps keep their dependencies isolated.
+
+16. CURRENT BACKEND FLOW
+Browser / React Frontend
+        |
+        v
+   HTTP Request
+        |
+        v
+      FastAPI
+        |
+        v
+   Route Function
+        |
+        v
+   JSON Response
+
+Later:
+React -> FastAPI -> File Scanner -> Classification -> Organizer -> File System
+
+17. IMPORTANT CONCEPTS
+1. FastAPI = Python framework for APIs.
+2. API = communication interface between software components.
+3. Endpoint = specific API URL.
+4. GET = method generally used to retrieve data.
+5. Uvicorn = server for running FastAPI.
+6. JSON = common data exchange format.
+7. Decorator = syntax such as @app.get() that configures/extends a function.
+8. localhost / 127.0.0.1 = local computer.
+9. Port = communication endpoint such as 8000.
+10. /docs = FastAPI interactive API documentation.
+
+18. INTERVIEW / VIVA QUESTIONS
+Q1. What is FastAPI?
+A. A Python web framework used to build APIs.
+
+Q2. What is an API?
+A. An interface that allows software components to communicate.
+
+Q3. What is Uvicorn?
+A. An ASGI server used to run FastAPI applications.
+
+Q4. What does --reload do?
+A. It automatically reloads the server when code changes during development.
+
+Q5. What is an endpoint?
+A. A specific URL through which an API provides an operation.
+
+Q6. What does GET mean?
+A. An HTTP method generally used to retrieve data.
+
+Q7. What is JSON?
+A. A lightweight format commonly used for exchanging API data.
+
+Q8. What is Swagger UI?
+A. An interactive interface for viewing and testing API endpoints.
+
+Q9. Why use a virtual environment?
+A. To isolate project dependencies.
+
+Q10. What does HTTP 200 mean?
+A. The request was successfully processed.
+
+19. NEXT CONCEPT
+FILE SCANNER
+
+We will learn:
+- pathlib
+- Path objects
+- Files vs directories
+- Directory traversal
+- File extensions
+- File metadata
+- Error handling
+- Returning scan results
+- Connecting the scanner with FastAPI
+
+We will first test the scanner on a SAFE dummy folder, not a real personal folder.
