@@ -578,3 +578,23 @@ B.Tech CSE Student
 📄 License
 
 This project is currently developed for educational, learning, and portfolio purposes.
+
+## 📸 Screenshots
+
+### Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
+
+### File Organizer
+![File Organizer](docs/screenshots/organizer.png)
+
+### Duplicate Detection
+![Duplicate Detection](docs/screenshots/duplicates.png)
+
+### Date-Based Organization
+![Date Organizer](docs/screenshots/date-organizer.png)
+
+### Custom Rules
+![Custom Rules](docs/screenshots/rules.png)
+
+### Protected Folders
+![Settings](docs/screenshots/settings.png)
