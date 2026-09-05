@@ -1,8 +1,8 @@
-# Smart File Organizer
+Smart File Organizer
 
 A full-stack file organization and management application that automatically scans folders, classifies files, detects duplicates, and organizes files safely.
 
-## 📌 Project Overview
+📌 Project Overview
 
 Smart File Organizer is a full-stack application designed to make file management easier and safer.
 
@@ -10,57 +10,86 @@ Instead of manually sorting files into different folders, the application scans 
 
 The project also provides duplicate detection, date-based organization, custom rules, undo functionality, activity history, protected folders, and a statistics dashboard.
 
-## ✨ Features
+✨ Features
 
-- 📁 Recursive folder scanning
-- 🗂️ Automatic file classification
-- 📦 Category-based file organization
-- 👀 File organization preview
-- 🔍 Duplicate detection using SHA-256
-- 🛡️ Safe duplicate handling
-- 📅 Date-based organization
-- ⚙️ Custom file-extension rules
-- ↩️ Undo last organization action
-- 📋 Activity history
-- 🔐 Protected folder safety
-- 📊 Statistics dashboard
-- 📈 Data visualization with charts
-- 🎨 Professional responsive UI
-- 🔗 React frontend with FastAPI backend
-- 💾 SQLite database for application history
+📁 Recursive folder scanning
 
-## 🛠️ Tech Stack
+🗂️ Automatic file classification
 
-### Frontend
+📦 Category-based file organization
 
-- React.js
-- Tailwind CSS
-- Axios
-- Recharts
-- Lucide React
-- Vite
+👀 File organization preview
 
-### Backend
+🔍 Duplicate detection using SHA-256
 
-- Python
-- FastAPI
-- SQLAlchemy
-- Pydantic
-- SQLite
-- Uvicorn
+🛡️ Safe duplicate handling
 
-### Python Modules
+📅 Date-based organization
 
-- pathlib
-- shutil
-- hashlib
-- logging
-- datetime
-- collections
+⚙️ Custom file-extension rules
 
-## 🏗️ System Architecture
+↩️ Undo last organization action
 
-```text
+📋 Activity history
+
+🔐 Protected folder safety
+
+📊 Statistics dashboard
+
+📈 Data visualization with charts
+
+🎨 Professional responsive UI
+
+🔗 React frontend with FastAPI backend
+
+💾 SQLite database for application history
+
+🛠️ Tech Stack
+
+Frontend
+
+React.js
+
+Tailwind CSS
+
+Axios
+
+Recharts
+
+Lucide React
+
+Vite
+
+Backend
+
+Python
+
+FastAPI
+
+SQLAlchemy
+
+Pydantic
+
+SQLite
+
+Uvicorn
+
+Python Modules
+
+pathlib
+
+shutil
+
+hashlib
+
+logging
+
+datetime
+
+collections
+
+🏗️ System Architecture
+
 Smart File Organizer
         │
         ▼
@@ -79,7 +108,7 @@ Python Services
 File  SQLite Logging
 System Database
 
-## Application Workflow
+🔄 Application Workflow
 
 Select Folder
      ↓
@@ -97,7 +126,7 @@ Save Activity
      ↓
 Generate Statistics
 
-## Project Structure
+📂 Project Structure
 
 smart-file-organizer/
 │
@@ -105,20 +134,15 @@ smart-file-organizer/
 │   ├── app/
 │   │   ├── api/
 │   │   │   └── organizer.py
-│   │   │
 │   │   ├── core/
 │   │   │   └── logger.py
-│   │   │
 │   │   ├── database/
 │   │   │   └── database.py
-│   │   │
 │   │   ├── models/
 │   │   │   ├── activity.py
 │   │   │   └── protected_folder.py
-│   │   │
 │   │   ├── schemas/
 │   │   │   └── organizer.py
-│   │   │
 │   │   └── services/
 │   │       ├── classifier.py
 │   │       ├── conflict_handler.py
@@ -131,7 +155,6 @@ smart-file-organizer/
 │   │       ├── scanner.py
 │   │       ├── statistics.py
 │   │       └── undo_manager.py
-│   │
 │   ├── logs/
 │   ├── tests/
 │   └── requirements.txt
@@ -151,36 +174,62 @@ smart-file-organizer/
 │   │   │   ├── organizer/
 │   │   │   ├── rules/
 │   │   │   └── settings/
-│   │   │
 │   │   ├── services/
 │   │   │   └── api.js
-│   │   │
 │   │   ├── App.jsx
 │   │   ├── App.css
 │   │   ├── index.css
 │   │   └── main.jsx
-│   │
 │   ├── package.json
 │   └── vite.config.js
 │
 ├── .gitignore
 └── README.md
 
-## File Classification
+🗂️ File Classification
+
 The application classifies files according to their extensions.
 
-| Extension                             | Category    |
-| ------------------------------------- | ----------- |
-| `.pdf`, `.doc`, `.docx`, `.txt`       | Documents   |
-| `.jpg`, `.jpeg`, `.png`, `.gif`       | Images      |
-| `.mp4`, `.mkv`, `.avi`, `.mov`        | Videos      |
-| `.mp3`, `.wav`, `.flac`, `.m4a`       | Music       |
-| `.py`, `.js`, `.jsx`, `.java`, `.cpp` | Code        |
-| `.zip`, `.rar`, `.7z`, `.tar`         | Archives    |
-| `.exe`, `.msi`, `.bat`, `.cmd`        | Executables |
-| Unknown extensions                    | Others      |
+Extension
 
-## File Organization Example
+Category
+
+.pdf, .doc, .docx, .txt
+
+Documents
+
+.jpg, .jpeg, .png, .gif
+
+Images
+
+.mp4, .mkv, .avi, .mov
+
+Videos
+
+.mp3, .wav, .flac, .m4a
+
+Music
+
+.py, .js, .jsx, .java, .cpp
+
+Code
+
+.zip, .rar, .7z, .tar
+
+Archives
+
+.exe, .msi, .bat, .cmd
+
+Executables
+
+Unknown extensions
+
+Others
+
+📁 File Organization Example
+
+Before
+
 Downloads/
 ├── resume.pdf
 ├── photo.jpg
@@ -189,23 +238,23 @@ Downloads/
 └── backup.zip
 
 After
+
 Downloads/
 ├── Documents/
 │   └── resume.pdf
-│
 ├── Images/
 │   └── photo.jpg
-│
 ├── Music/
 │   └── song.mp3
-│
 ├── Code/
 │   └── project.py
-│
 └── Archives/
     └── backup.zip
 
-## Duplicate Detection
+🔍 Duplicate Detection
+
+Duplicate files are detected using the SHA-256 hashing algorithm.
+
 File 1
   ↓
 SHA-256 Hash
@@ -222,55 +271,101 @@ Same Hash
   ↓
 Possible Duplicate
 
-## Date-Based Organization
+Duplicate files can be moved safely into a Duplicates folder.
+
+📅 Date-Based Organization
+
+Files can also be organized according to their modification date.
+
+Example:
+
 Documents/
 └── 2026/
     └── September/
         └── resume.pdf
 
-## Custom Rules
+⚙️ Custom Rules
+
+Users can create custom extension rules.
+
+Example:
+
 .csv → Data
 
-## Undo System
+Custom rules allow users to override the default classification system.
+
+↩️ Undo System
+
+The application records file movement information so that the latest organization action can be reversed.
+
+Example:
+
 Documents/resume.pdf
         ↓
       Undo
         ↓
 Original Location
 
-## Activity History
+📋 Activity History
+
 Important operations are recorded in the SQLite database.
 
 Examples include:
 
 File organization
+
 Duplicate movement
+
 Date-based organization
+
 Undo operations
 
 This allows the application to maintain an operation history.
 
-## Protected Folders
+🔐 Protected Folders
+
+The application includes a safety mechanism to prevent accidental organization of important system folders.
+
+Default protected folders include:
+
 C:\Windows
 C:\Program Files
 C:\Program Files (x86)
 
-## Dashboard
+Users can also add custom protected folders.
+
+📊 Dashboard
+
+The dashboard provides an overview of application activity.
+
 It displays information such as:
 
 Total activities
+
 Organized files
+
 Duplicate moves
+
 Date-organized files
+
 Undo operations
+
 Successful operations
+
 Failed operations
+
 Category distribution
+
 Operation statistics
 
 Charts are used to make the statistics easier to understand.
 
-## API
+🔌 API
+
+The backend is built using FastAPI and exposes REST API endpoints for the frontend.
+
+Main operations include:
+
 POST   /organizer/scan
 POST   /organizer/organize
 POST   /organizer/duplicates
@@ -289,12 +384,31 @@ DELETE /organizer/protected-folders
 GET    /organizer/statistics
 GET    /organizer/dashboard
 
-## Installation & Setup
+💾 Database
+
+The project uses SQLite with SQLAlchemy.
+
+The database stores application information such as:
+
+Activity history
+
+Protected folders
+
+Operation status
+
+Categories
+
+The database file is intentionally excluded from Git using .gitignore.
+
+🚀 Installation & Setup
+
 1. Clone the Repository
+
 git clone https://github.com/sarthiv/smart-file-organizer.git
 cd smart-file-organizer
 
-## Backend Setup
+🐍 Backend Setup
+
 Move into the backend directory:
 
 cd backend
@@ -323,7 +437,8 @@ FastAPI Swagger documentation:
 
 http://127.0.0.1:8000/docs
 
-## Frontend Setup
+⚛️ Frontend Setup
+
 Open a new terminal and move to the frontend directory:
 
 cd frontend
@@ -340,50 +455,126 @@ Frontend will normally run at:
 
 http://localhost:5173
 
-## Learning Resources
+🧪 Testing
+
+The project was tested for the following major operations:
+
+Backend health check
+
+Folder scanning
+
+File classification
+
+File organization
+
+Duplicate detection
+
+Duplicate movement
+
+Date-based organization
+
+Custom rules
+
+Undo functionality
+
+Protected folders
+
+Dashboard statistics
+
+Activity history
+
+Responsive UI
+
+End-to-end workflow
+
+🛡️ Safety Considerations
+
+The application is designed with several safety mechanisms:
+
+Preview before organization
+
+Protected folders
+
+Duplicate detection
+
+Filename conflict handling
+
+Undo functionality
+
+Error handling
+
+Activity logging
+
+These features help reduce the risk of accidental file operations.
+
+📚 Learning Resources
+
 The concept/ directory contains notes explaining the concepts used during development.
 
 These notes cover topics such as:
 
 FastAPI
+
 File scanning
+
 File classification
+
 React and FastAPI integration
+
 Duplicate detection
+
 Safe duplicate handling
+
 Activity logging
+
 Date-based organization
+
 Custom rules
+
 Undo systems
 
 They can also be used for:
 
 College viva preparation
+
 Technical interviews
+
 Revision
+
 Understanding the project architecture
+
 🔮 Future Improvements
 
 Possible future improvements include:
 
 AI-based file classification
+
 Advanced file search
+
 File preview
+
 Cloud storage integration
+
 Scheduled automatic organization
+
 Advanced rule management
+
 File recovery system
+
 User authentication
+
 Multi-user support
+
 Cloud deployment
+
 More advanced analytics
 
-## Author
+👨‍💻 Author
 
 Sarthi Verma
 
 B.Tech CSE Student
 
-## License
+📄 License
 
 This project is currently developed for educational, learning, and portfolio purposes.
