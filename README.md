@@ -596,5 +596,9 @@ This project is currently developed for educational, learning, and portfolio pur
 ### Custom Rules
 ![Custom Rules](docs/screenshots/rules.png)
 
+![Date Organizer](docs/screenshots/date_organizer.png)
+
+![Custom Rules](docs/screenshots/rule.png)
+
 ### Protected Folders
 ![Settings](docs/screenshots/settings.png)
